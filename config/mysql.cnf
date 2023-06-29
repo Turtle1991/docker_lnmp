@@ -1,0 +1,11 @@
+[mysqld]
+basedir = /usr/local/mysql
+datadir = /usr/local/mysql/data
+port = 3306
+socket = /tmp/mysql.sock
+character-set-server=utf8
+init_connect='SET NAMES utf8'
+
+[client]
+socket=/tmp/mysql.sock
+default-character-set=utf8
