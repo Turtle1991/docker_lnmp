@@ -399,8 +399,16 @@ RUN cd /usr/local/src \
     && make && make install \
     && echo -e "extension=memcache.so\nextension=memcached.so" >> /usr/local/php8/etc/php.ini \
     && cd /usr/local/src \
+    && unzip -q php-rdkafka-6.x.zip \
+    && cd php-rdkafka-6.x \
+    && /usr/local/php8/bin/phpize \
+    && ./configure --with-php-config=/usr/local/php8/bin/php-config \
+    && make all -j 5 && make install \
+    && echo -e "extension=rdkafka.so" >> /usr/local/php8/etc/php.ini \
+    && cd /usr/local/src \
     && rm -f ./*.tgz \
-    && rm -f ./*.tar.gz
+    && rm -f ./*.tar.gz \
+    && rm -f ./*.zip
 
 # 安装supervisor
 COPY soft/supervisor-4.2.5.tar.gz /usr/local/src/
