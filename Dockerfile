@@ -243,11 +243,11 @@ RUN yum install -y python-devel curl-devel libXpm-devel freetype-devel \
     && cd librdkafka-master \
     && ./configure && make && make install \
     && cd /usr/local/src \
-    && unzip -q php-rdkafka-master.zip \
-    && cd php-rdkafka-master \
+    && tar -zxf php-rdkafka-4.0.0.tar.gz \
+    && cd php-rdkafka-4.0.0 \
     && /usr/local/php56/bin/phpize \
-    && ./configure --enable-kafka --with-php-config=/usr/local/php56/bin/php-config \
-    && make && make install \
+    && ./configure --with-php-config=/usr/local/php56/bin/php-config \
+    && make all -j 5 && make install \
     && echo -e "extension=rdkafka.so" >> /usr/local/php56/etc/php.ini \
     && cd /usr/local/src \
     && unzip -q phpredis-master.zip \
