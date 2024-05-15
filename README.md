@@ -1,4 +1,3 @@
-
 ## 说明
 
 通过Dockerfile编译镜像，你可以获得一个本地开发环境
@@ -6,27 +5,41 @@
 ## 编译镜像
 
 在当前目录下执行，会根据Dockerfile编译生成镜像
+
 ```
 docker build -t my-centos .
+```
+
+ps：如果报错类似说获取不到依赖的基础镜像，那么可以先自己pull下来，然后再继续执行```docker build```
+
+```
+拉取依赖镜像到本地
+docker pull centos:7.9.2009
 ```
 
 ## 根据镜像启动容器
 
 如果没有容器，需要根据镜像启动一个容器
+
+最好指定下容器要加入的网络，这样后续如果有多个容器，就可以互相通信 ```--network turtle-network```
+
 ```
-docker run --name 容器名称 -it -p 80:80  -p 443:443 -v "主机想要共享到容器的目录:容器里对应的目录" my-centos /bin/bash
+docker run --name 容器名称 --network 容器要加入的网络 -it -p 主机端口:容器里的端口 -v "主机想要共享到容器的目录:容器里对应的目录" my-centos /bin/bash
 
 如：
-docker run --name demo -it -p 80:80  -p 443:443 -v "/Users/turtle/turtleWork:/turtle" my-centos /bin/bash
+docker run --name demo --network turtle-network -it -p 80:80 -p 443:443 -v "/Users/turtle/turtleWork:/turtle" my-centos /bin/bash
 ```
+
 注意：因为是本地，所以用了80端口，线上环境不建议这么用，暴露80端口，会不安全。
 
 如果之前已经有容器了，那直接启动就行了
+
 ```
 docker start 容器名称
 ```
 
 登入容器
+
 ```
 docker exec -it 容器名称 bash
 ```
@@ -34,6 +47,7 @@ docker exec -it 容器名称 bash
 ## 首次容器启动后，需要做到事情：
 
 #### nginx需要自己修改下配置
+
 ```
 vim /usr/local/nginx_1.25.0/conf/nginx.conf
 新增：
@@ -47,11 +61,13 @@ include /usr/local/nginx_1.25.0/conf/vhosts/host_*.conf;
 ```
 /usr/local/mysql/bin/mysqld_safe --skip-grant-tables --skip-networking &
 ```
+
 这样便可以越过权限表，跳过密码认证过程来登入。
 
 新开一个终端，通过 ```mysql -uroot -p``` 登入。
 
 开始设置密码
+
 ```
 mysql> use mysql;
 mysql> update user set authentication_string=PASSWORD('nidemima') where User='root';
@@ -61,6 +77,7 @@ mysql> flush privileges;
 再启动mysql服务，通过命令和密码就可以登进去了。
 
 可能会遇到的问题：
+
 ```
 退出后重新登入 可以进 可是当我 show databases; 的时候 提示：
 
