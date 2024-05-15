@@ -305,7 +305,8 @@ RUN cd /usr/local/src \
     && sed -i 's#loglevel notice#loglevel verbose#' /usr/local/redis_2.6.14/etc/redis_6381.conf \
     && sed -i 's#dir ./#dir /usr/local/redis_2.6.14/var/dump/6381#' /usr/local/redis_2.6.14/etc/redis_6381.conf \
     && sed -i 's#port 6379#port 6381#' /usr/local/redis_2.6.14/etc/redis_6381.conf \
-    && rm -f /usr/local/src/*tar.gz
+    && rm -f /usr/local/src/*tar.gz \
+    && yum clean all
 
 # 安装php8
 COPY soft/php8/* /usr/local/src/
@@ -408,7 +409,8 @@ RUN cd /usr/local/src \
     && cd /usr/local/src \
     && rm -f ./*.tgz \
     && rm -f ./*.tar.gz \
-    && rm -f ./*.zip
+    && rm -f ./*.zip \
+    && yum clean all
 
 # 安装supervisor
 COPY soft/supervisor-4.2.5.tar.gz /usr/local/src/
