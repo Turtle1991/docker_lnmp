@@ -52,7 +52,6 @@ function checkProcess() {
 }
 
 color green "🌟[Nginx]启动..."
-exit
 /usr/local/nginx_1.25.0/sbin/nginx
 checkPort 80
 if [[ $? == 1 ]]; then
