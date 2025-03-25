@@ -161,6 +161,7 @@ RUN apt-get update && \
     && cd /usr/local/src \
     && tar -zxf memcache-2.2.7.tgz \
     && cd memcache-2.2.7 \
+    && /usr/local/php/bin/phpize \
     && ./configure --enable-memcache --with-php-config=/usr/local/php56/bin/php-config --with-zlib-dir=/usr/ \
     && make && make install \
     && printf "\nextension=memcache.so" >> /usr/local/php/etc/php.ini \
