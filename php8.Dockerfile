@@ -107,6 +107,7 @@ RUN apt-get update && \
     && sed -i 's#listen = 127.0.0.1:9000#listen = 9000#' /usr/local/php/etc/php-fpm.d/www.conf \
     # 安装扩展 \
     && cd /usr/local/src \
+    # mcryp扩展 \
     && tar -zxf libmcrypt-2.5.8.tar.gz \
     && cd libmcrypt-2.5.8 \
     && ./configure && make && make install \
@@ -122,6 +123,7 @@ RUN apt-get update && \
     && make && make install \
     && printf "\nextension=mcrypt.so" >> /usr/local/php/etc/php.ini \
     && cd /usr/local/src \
+    # igbinary扩展 \
     && tar -zxf igbinary-3.2.15.tgz \
     && cd igbinary-3.2.15 \
     && /usr/local/php/bin/phpize \
@@ -129,6 +131,7 @@ RUN apt-get update && \
     && make && make install \
     && printf "\n; Load igbinary extension\nextension=igbinary.so\n; Use igbinary as session serializer\nsession.serialize_handler=igbinary\n; Enable or disable compacting of duplicate strings\n; The default is On.\nigbinary.compact_strings=On\n; Use igbinary as serializer in APC cache (3.1.7 or later)\n;apc.serializer=igbinary\n" >> /usr/local/php/etc/php.ini \
     && cd /usr/local/src \
+    # redis扩展 \
     && tar -zxf phpredis-5.3.4.tgz \
     && cd redis-5.3.4 \
     && /usr/local/php/bin/phpize \
@@ -136,6 +139,7 @@ RUN apt-get update && \
     && make && make install \
     && printf "\nextension=redis.so" >> /usr/local/php/etc/php.ini \
     && cd /usr/local/src \
+    # memcache扩展 \
     && tar -zxf memcache-8.0.tgz \
     && cd memcache-8.0 \
     && /usr/local/php/bin/phpize \
@@ -143,6 +147,7 @@ RUN apt-get update && \
     && make && make install \
     && printf "\nextension=memcache.so" >> /usr/local/php/etc/php.ini \
     && cd /usr/local/src \
+    # memcached扩展 \
     && apt-get update && apt-get install -y --no-install-recommends libmemcached-dev \
     && tar -zxf memcached-3.1.5.tgz \
     && cd memcached-3.1.5 \
@@ -151,6 +156,7 @@ RUN apt-get update && \
     && make && make install \
     && printf "\nextension=memcached.so" >> /usr/local/php/etc/php.ini \
     && cd /usr/local/src \
+    # rdkafka扩展 \
     && unzip -q librdkafka-master.zip \
     && cd librdkafka-master \
     && ./configure && make && make install \
@@ -162,11 +168,10 @@ RUN apt-get update && \
     && make all -j 5 && make install \
     && printf "\nextension=rdkafka.so" >> /usr/local/php/etc/php.ini \
     # 清理空间，减小镜像体积 \
-    && cd /usr/local/src \
-    && rm -f ./*.tgz \
-    && rm -f ./*.tar.gz \
-    && rm -f ./*.zip \
+    && rm -rf /usr/local/src/* \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN printf "/usr/local/php/sbin/php-fpm\ntail -f /dev/null\n" > /startup.sh
+
 # 默认命令（可以根据需要修改）
-CMD ["bash"]
+CMD ["bash", "/startup.sh"]
