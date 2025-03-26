@@ -139,7 +139,16 @@ RUN apt-get update && \
     && sed -i 's#;pid = run/php-fpm.pid#pid = run/php-fpm.pid#' /usr/local/php/etc/php-fpm.conf \
     # 只监听指定端口，方便容器间访问 \
     && sed -i 's#listen = 127.0.0.1:9000#listen = 9000#' /usr/local/php/etc/php-fpm.conf \
-    # 安装扩展 \
+    # 清理空间，减小镜像体积 \
+    && cd /usr/local/src \
+    && rm -f ./*.tgz \
+    && rm -f ./*.tar.gz \
+    && rm -f ./*.zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 安装扩展
+COPY soft/bao/* /usr/local/src/
+RUN apt-get update \
     && cd /usr/local/src \
     && tar -zxf libmcrypt-2.5.8.tar.gz \
     && cd libmcrypt-2.5.8 \
@@ -162,7 +171,7 @@ RUN apt-get update && \
     && tar -zxf memcache-2.2.7.tgz \
     && cd memcache-2.2.7 \
     && /usr/local/php/bin/phpize \
-    && ./configure --enable-memcache --with-php-config=/usr/local/php56/bin/php-config --with-zlib-dir=/usr/ \
+    && ./configure --enable-memcache --with-php-config=/usr/local/php/bin/php-config --with-zlib-dir=/usr/ \
     && make && make install \
     && printf "\nextension=memcache.so" >> /usr/local/php/etc/php.ini \
     && cd /usr/local/src \
@@ -188,7 +197,7 @@ RUN apt-get update && \
     && tar -zxf php-rdkafka-4.0.0.tar.gz \
     && cd php-rdkafka-4.0.0 \
     && /usr/local/php/bin/phpize \
-    && ./configure --with-php-config=/usr/local/php56/bin/php-config \
+    && ./configure --with-php-config=/usr/local/php/bin/php-config \
     && make all -j 5 && make install \
     && printf "\nextension=rdkafka.so" >> /usr/local/php/etc/php.ini \
     && cd /usr/local/src \
@@ -205,5 +214,7 @@ RUN apt-get update && \
     && rm -f ./*.zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN printf "/usr/local/php/sbin/php-fpm\ntail -f /dev/null\n" > /startup.sh
+
 # 默认命令（可以根据需要修改）
-CMD ["bash"]
+CMD ["bash", "/startup.sh"]
