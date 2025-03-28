@@ -33,6 +33,7 @@ ENV LC_ALL=zh_CN.UTF-8
 # 安装编译工具
 # build-essential 包含 make、gcc、g++ 等工具
 # pkg-config 在编译安装的时候，有时候需要通过 PKG_CONFIG_PATH 指定配置
+# 证书包 ca-certificates（支持https请求和本地自签证书）
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
@@ -42,5 +43,6 @@ RUN apt-get update && \
         zlib1g-dev \
         libssl-dev \
         libpcre3-dev \
-        pkg-config && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+        pkg-config \
+        ca-certificates \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*

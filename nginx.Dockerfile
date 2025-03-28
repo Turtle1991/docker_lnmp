@@ -27,8 +27,8 @@ RUN groupadd nginx \
     && make && make install \
     && mkdir /usr/local/nginx_1.25.0/conf/vhosts \
     && cd /usr/local/src \
-    && rm -f ./*.tar.gz \
-    && rm -rf nginx-1.25.0/ \
+    # 清理空间，减小镜像体积 \
+    && rm -rf /usr/local/src/* \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 默认命令（可以根据需要修改）

@@ -42,8 +42,9 @@ RUN apt-get update && \
         zlib1g-dev \
         libssl-dev \
         libpcre3-dev \
-        pkg-config && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+        pkg-config \
+        ca-certificates \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 安装PHP
 COPY soft/bao/* /usr/local/src/
@@ -96,7 +97,15 @@ RUN apt-get update && \
     # 安装旧版OpenSSL，默认的版本太高了 \
     && tar -zxf openssl-1.0.2u.tar.gz \
     && cd openssl-1.0.2u \
-    && ./config --prefix=/usr/local/openssl-1.0.2 \
+    && ./config -fPIC --prefix=/usr/local/openssl-1.0.2 shared \
+    && make && make install \
+    && printf "/usr/local/openssl-1.0.2/lib" > /etc/ld.so.conf.d/openssl-1.0.2.conf \
+    && ldconfig \
+    && cd /usr/local/src \
+    # 安装旧版curl，默认的版本太高了 \
+    && tar -zxf curl-7.29.0.tar.gz \
+    && cd curl-7.29.0 \
+    && ./configure --prefix=/usr/local/curl-7.29.0 --with-ssl=/usr/local/openssl-1.0.2 \
     && make && make install \
     # 安装PHP \
     && cd /usr/local/src \
@@ -122,7 +131,7 @@ RUN apt-get update && \
                     --enable-zip \
                     --enable-soap \
                     --enable-calendar \
-                    --with-curl \
+                    --with-curl=/usr/local/curl-7.29.0 \
                     --with-pdo-mysql \
                     --enable-xml \
                     --with-iconv \
