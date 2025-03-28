@@ -46,7 +46,7 @@ RUN apt-get update && \
         ca-certificates \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 安装PHP
+# 安装依赖
 COPY soft/bao/* /usr/local/src/
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -107,7 +107,16 @@ RUN apt-get update && \
     && cd curl-7.29.0 \
     && ./configure --prefix=/usr/local/curl-7.29.0 --with-ssl=/usr/local/openssl-1.0.2 \
     && make && make install \
-    # 安装PHP \
+    # 清理空间，减小镜像体积 \
+    && cd /usr/local/src \
+    && rm -f ./*.tgz \
+    && rm -f ./*.tar.gz \
+    && rm -f ./*.zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 安装PHP
+COPY soft/bao/* /usr/local/src/
+RUN apt-get update \
     && cd /usr/local/src \
     && tar -zxf php-5.6.38.tar.gz \
     && mv php-5.6.38 php \
@@ -218,9 +227,7 @@ RUN apt-get update \
     && printf "\nextension=redis.so" >> /usr/local/php/etc/php.ini \
     # 清理空间，减小镜像体积 \
     && cd /usr/local/src \
-    && rm -f ./*.tgz \
-    && rm -f ./*.tar.gz \
-    && rm -f ./*.zip \
+    && rm -rf /usr/local/src/* \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN printf "/usr/local/php/sbin/php-fpm\ntail -f /dev/null\n" > /startup.sh
