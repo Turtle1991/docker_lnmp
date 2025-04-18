@@ -4,22 +4,40 @@
 
 1.安装必要的依赖（镜像中已经安装了，可以跳过这一步）
 
+centos
 ```
 yum install -y ca-certificates
+```
+
+ubuntu
+```
+apt-get install -y --no-install-recommends ca-certificates
 ```
 
 2.把自签用的根证书移动到下面目录
 
 证书改了个名字 turtle_ca.crt ，方便识别，不然原先的 root.crt 时间久了估计都忘记是我自己加的证书了
 
+centos
 ```
 cp out/root.crt /usr/share/pki/ca-trust-source/anchors/turtle_ca.crt
 ```
 
+ubuntu
+```
+cp out/root.crt /usr/local/share/ca-certificates/turtle_ca.crt
+```
+
 3.更新信任
 
+centos
 ```
 update-ca-trust
+```
+
+ubuntu
+```
+update-ca-certificates
 ```
 
 以上信任更新后，在文件 /etc/ssl/certs/ca-bundle.crt 和 /etc/ssl/certs/ca-bundle.trust.crt 里就包含了新的自定义证书了。

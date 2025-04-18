@@ -139,10 +139,20 @@ kill -USR2 `cat /usr/local/php56/var/run/php-fpm.pid`
 /usr/local/redis_2.6.14/bin/redis-server /usr/local/redis_2.6.14/etc/redis_6381.conf
 ```
 
+服务停止
+```
+/usr/local/redis_2.6.14/bin/redis-cli shutdown
+```
+
 #### mc
 
 ```
 /usr/local/memcached/bin/memcached -d -m 100 -u root -l 127.0.0.1 -p 12000 -c 1024 -P /usr/local/memcached/memcached_12000.pid
+```
+
+监听所有IPv4
+```
+/usr/local/memcached/bin/memcached -d -m 100 -u root -l 0.0.0.0 -p 12000 -c 1024 -P /usr/local/memcached/memcached_12000.pid
 ```
 
 ## 日志
